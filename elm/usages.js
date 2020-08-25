@@ -8679,12 +8679,49 @@ var _user$project$Usages$usageView = F5(
 	});
 var _user$project$Usages$view = function (_p9) {
 	var _p10 = _p9;
-	var _p12 = _p10.willShowRenamePanel;
-	var _p11 = _p10.usages;
+	var _p13 = _p10.willShowRenamePanel;
+	var _p12 = _p10.usages;
+	var upsert = F3(
+		function (k, v, dict) {
+			var _p11 = A2(_elm_lang$core$Dict$get, k, dict);
+			if (_p11.ctor === 'Just') {
+				return A3(
+					_elm_lang$core$Dict$insert,
+					k,
+					A2(
+						_elm_lang$core$Array$append,
+						_p11._0,
+						_elm_lang$core$Array$fromList(
+							{
+								ctor: '::',
+								_0: v,
+								_1: {ctor: '[]'}
+							})),
+					dict);
+			} else {
+				return A3(
+					_elm_lang$core$Dict$insert,
+					k,
+					_elm_lang$core$Array$fromList(
+						{
+							ctor: '::',
+							_0: v,
+							_1: {ctor: '[]'}
+						}),
+					dict);
+			}
+		});
+	var usagesGroupedBySourcePath = A3(
+		_elm_lang$core$Array$foldl,
+		function (c) {
+			return A2(upsert, c.sourcePath, c);
+		},
+		_elm_lang$core$Dict$empty,
+		_p12);
 	var headerText = function () {
-		if (_p12) {
+		if (_p13) {
 			var usageOrUsages = _elm_lang$core$Native_Utils.eq(
-				_elm_lang$core$Array$length(_p11),
+				_elm_lang$core$Array$length(_p12),
 				1) ? ' usage' : ' usages';
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
@@ -8693,14 +8730,14 @@ var _user$project$Usages$view = function (_p9) {
 					_elm_lang$core$Basics_ops['++'],
 					_elm_lang$core$Basics$toString(
 						_elm_lang$core$Array$length(
-							_user$project$Usages$checkedUsages(_p11))),
+							_user$project$Usages$checkedUsages(_p12))),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						' out of ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							_elm_lang$core$Basics$toString(
-								_elm_lang$core$Array$length(_p11)),
+								_elm_lang$core$Array$length(_p12)),
 							usageOrUsages))));
 		} else {
 			return A2(
@@ -8713,7 +8750,7 @@ var _user$project$Usages$view = function (_p9) {
 						_elm_lang$core$Basics_ops['++'],
 						'`: ',
 						_elm_lang$core$Basics$toString(
-							_elm_lang$core$Array$length(_p11)))));
+							_elm_lang$core$Array$length(_p12)))));
 		}
 	}();
 	return A2(
@@ -8743,11 +8780,39 @@ var _user$project$Usages$view = function (_p9) {
 						_0: A2(
 							_elm_lang$html$Html$ul,
 							{ctor: '[]'},
-							_elm_lang$core$Array$toList(
+							_elm_lang$core$Dict$values(
 								A2(
-									_elm_lang$core$Array$indexedMap,
-									A3(_user$project$Usages$usageView, _p10.projectDirectory, _p10.selectedIndex, _p12),
-									_p11))),
+									_elm_lang$core$Dict$map,
+									F2(
+										function (k, v) {
+											return A2(
+												_elm_lang$html$Html$li,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$div,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(k),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$ul,
+															{ctor: '[]'},
+															_elm_lang$core$Array$toList(
+																A2(
+																	_elm_lang$core$Array$indexedMap,
+																	A3(_user$project$Usages$usageView, _p10.projectDirectory, _p10.selectedIndex, _p13),
+																	v))),
+														_1: {ctor: '[]'}
+													}
+												});
+										}),
+									usagesGroupedBySourcePath))),
 						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
@@ -8767,19 +8832,19 @@ var _user$project$Usages$subscriptions = function (model) {
 			_1: {
 				ctor: '::',
 				_0: _user$project$Usages$selectNextUsageSub(
-					function (_p13) {
+					function (_p14) {
 						return _user$project$Usages$SelectNextUsage;
 					}),
 				_1: {
 					ctor: '::',
 					_0: _user$project$Usages$selectPreviousUsageSub(
-						function (_p14) {
+						function (_p15) {
 							return _user$project$Usages$SelectPreviousUsage;
 						}),
 					_1: {
 						ctor: '::',
 						_0: _user$project$Usages$getCheckedUsagesSub(
-							function (_p15) {
+							function (_p16) {
 								return _user$project$Usages$GetCheckedUsages;
 							}),
 						_1: {ctor: '[]'}

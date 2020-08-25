@@ -1,6 +1,7 @@
 port module Usages exposing (Model, Msg(..), Point, Range, Usage, checkedUsages, checkedUsagesReceivedCmd, emptyModel, getCheckedUsagesSub, init, main, maybeViewInEditor, normalizeIndex, selectDelta, selectNextUsageSub, selectPreviousUsageSub, setContentsSub, subscriptions, update, usageView, view, viewInEditorCmd)
 
 import Array
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (checked, class, type_)
 import Html.Events exposing (onCheck, onClick)
@@ -231,6 +232,17 @@ view { usages, token, projectDirectory, selectedIndex, willShowRenamePanel } =
 
             else
                 "Usages for `" ++ token ++ "`: " ++ (toString <| Array.length usages)
+
+        usagesGroupedBySourcePath =
+            Array.foldl (\c -> upsert c.sourcePath c) Dict.empty usages
+
+        upsert k v dict =
+            case Dict.get k dict of
+                Just ov ->
+                    Dict.insert k (Array.append ov (Array.fromList [ v ])) dict
+
+                Nothing ->
+                    Dict.insert k (Array.fromList [ v ]) dict
     in
     div []
         [ div [ class "header" ]
@@ -238,8 +250,18 @@ view { usages, token, projectDirectory, selectedIndex, willShowRenamePanel } =
         , div []
             [ ul
                 []
-                (Array.indexedMap (usageView projectDirectory selectedIndex willShowRenamePanel) usages
-                    |> Array.toList
+                (Dict.map
+                    (\k v ->
+                        li []
+                            [ div [] [ text k]
+                            , ul []
+                                (Array.indexedMap (usageView projectDirectory selectedIndex willShowRenamePanel) v
+                                    |> Array.toList
+                                )
+                            ]
+                    )
+                    usagesGroupedBySourcePath
+                    |> Dict.values
                 )
             ]
         ]
