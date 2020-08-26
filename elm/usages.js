@@ -8260,6 +8260,25 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$Usages$indexedFoldl = F3(
+	function (func, acc, list) {
+		var step = F2(
+			function (x, _p0) {
+				var _p1 = _p0;
+				var _p2 = _p1._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _p2 + 1,
+					_1: A3(func, _p2, x, _p1._1)
+				};
+			});
+		return _elm_lang$core$Tuple$second(
+			A3(
+				_elm_lang$core$Array$foldl,
+				step,
+				{ctor: '_Tuple2', _0: 0, _1: acc},
+				list));
+	});
 var _user$project$Usages$normalizeIndex = F2(
 	function (index, usages) {
 		var n = _elm_lang$core$Array$length(usages);
@@ -8401,11 +8420,11 @@ var _user$project$Usages$viewInEditorCmd = _elm_lang$core$Native_Platform.outgoi
 	});
 var _user$project$Usages$maybeViewInEditor = F2(
 	function (index, usages) {
-		var _p0 = A2(_elm_lang$core$Array$get, index, usages);
-		if (_p0.ctor === 'Nothing') {
+		var _p3 = A2(_elm_lang$core$Array$get, index, usages);
+		if (_p3.ctor === 'Nothing') {
 			return _elm_lang$core$Platform_Cmd$none;
 		} else {
-			return _user$project$Usages$viewInEditorCmd(_p0._0);
+			return _user$project$Usages$viewInEditorCmd(_p3._0);
 		}
 	});
 var _user$project$Usages$selectDelta = F2(
@@ -8437,37 +8456,37 @@ var _user$project$Usages$checkedUsagesReceivedCmd = _elm_lang$core$Native_Platfo
 	});
 var _user$project$Usages$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'SetContents':
-				var _p3 = _p1._0._4;
-				var _p2 = _p1._0._3;
+				var _p6 = _p4._0._4;
+				var _p5 = _p4._0._3;
 				var updatedModel = _elm_lang$core$Native_Utils.update(
 					model,
 					{
-						projectDirectory: _p1._0._0,
-						token: _p1._0._1,
-						usages: _p2,
-						selectedIndex: A2(_user$project$Usages$normalizeIndex, _p1._0._2, _p2),
-						willShowRenamePanel: _p3
+						projectDirectory: _p4._0._0,
+						token: _p4._0._1,
+						usages: _p5,
+						selectedIndex: A2(_user$project$Usages$normalizeIndex, _p4._0._2, _p5),
+						willShowRenamePanel: _p6
 					});
 				return {
 					ctor: '_Tuple2',
 					_0: updatedModel,
-					_1: _p3 ? _elm_lang$core$Platform_Cmd$none : A2(_user$project$Usages$maybeViewInEditor, updatedModel.selectedIndex, updatedModel.usages)
+					_1: _p6 ? _elm_lang$core$Platform_Cmd$none : A2(_user$project$Usages$maybeViewInEditor, updatedModel.selectedIndex, updatedModel.usages)
 				};
 			case 'SelectNextUsage':
 				return A2(_user$project$Usages$selectDelta, 1, model);
 			case 'SelectPreviousUsage':
 				return A2(_user$project$Usages$selectDelta, -1, model);
 			case 'SelectIndex':
-				var _p4 = _p1._0;
+				var _p7 = _p4._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{selectedIndex: _p4}),
-					_1: A2(_user$project$Usages$maybeViewInEditor, _p4, model.usages)
+						{selectedIndex: _p7}),
+					_1: A2(_user$project$Usages$maybeViewInEditor, _p7, model.usages)
 				};
 			case 'GetCheckedUsages':
 				return {
@@ -8477,9 +8496,9 @@ var _user$project$Usages$update = F2(
 						_user$project$Usages$checkedUsages(model.usages))
 				};
 			default:
-				var _p6 = _p1._0;
-				var _p5 = A2(_elm_lang$core$Array$get, _p6, model.usages);
-				if (_p5.ctor === 'Nothing') {
+				var _p9 = _p4._0;
+				var _p8 = A2(_elm_lang$core$Array$get, _p9, model.usages);
+				if (_p8.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
 					return {
@@ -8489,10 +8508,10 @@ var _user$project$Usages$update = F2(
 							{
 								usages: A3(
 									_elm_lang$core$Array$set,
-									_p6,
+									_p9,
 									_elm_lang$core$Native_Utils.update(
-										_p5._0,
-										{checked: _p1._1}),
+										_p8._0,
+										{checked: _p4._1}),
 									model.usages)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
@@ -8524,9 +8543,12 @@ var _user$project$Usages$GetCheckedUsages = {ctor: 'GetCheckedUsages'};
 var _user$project$Usages$SelectIndex = function (a) {
 	return {ctor: 'SelectIndex', _0: a};
 };
-var _user$project$Usages$usageView = F5(
-	function (projectDirectory, selectedIndex, willShowRenamePanel, index, usage) {
-		var usageTextClass = usage.checked ? 'usage-text' : 'usage-text-unchecked';
+var _user$project$Usages$usageView = F4(
+	function (projectDirectory, selectedIndex, willShowRenamePanel, _p10) {
+		var _p11 = _p10;
+		var _p15 = _p11._1;
+		var _p14 = _p11._0;
+		var usageTextClass = _p15.checked ? 'usage-text' : 'usage-text-unchecked';
 		var maybeRenamePanelView = willShowRenamePanel ? {
 			ctor: '::',
 			_0: A2(
@@ -8541,11 +8563,11 @@ var _user$project$Usages$usageView = F5(
 							_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$checked(usage.checked),
+								_0: _elm_lang$html$Html_Attributes$checked(_p15.checked),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Events$onCheck(
-										_user$project$Usages$SetUsageChecked(index)),
+										_user$project$Usages$SetUsageChecked(_p14)),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -8555,17 +8577,17 @@ var _user$project$Usages$usageView = F5(
 				}),
 			_1: {ctor: '[]'}
 		} : {ctor: '[]'};
-		var listItemClass = _elm_lang$core$Native_Utils.eq(selectedIndex, index) ? 'selected' : '';
-		var _p7 = usage;
-		var lineText = _p7.lineText;
-		var sourcePath = _p7.sourcePath;
-		var range = _p7.range;
+		var listItemClass = _elm_lang$core$Native_Utils.eq(selectedIndex, _p14) ? 'selected' : '';
+		var _p12 = _p15;
+		var lineText = _p12.lineText;
+		var sourcePath = _p12.sourcePath;
+		var range = _p12.range;
 		var preSymbolText = A2(_elm_lang$core$String$left, range.start.column, lineText);
-		var symbolText = function (_p8) {
+		var symbolText = function (_p13) {
 			return A2(
 				_elm_lang$core$String$left,
 				range.end.column - range.start.column,
-				A2(_elm_lang$core$String$dropLeft, range.start.column, _p8));
+				A2(_elm_lang$core$String$dropLeft, range.start.column, _p13));
 		}(lineText);
 		var postSymbolText = A2(
 			_elm_lang$core$String$right,
@@ -8588,7 +8610,7 @@ var _user$project$Usages$usageView = F5(
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Usages$SelectIndex(index)),
+								_user$project$Usages$SelectIndex(_p14)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$class(usageTextClass),
@@ -8599,102 +8621,89 @@ var _user$project$Usages$usageView = F5(
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$div,
-								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('line-wrapper'),
+									_1: {ctor: '[]'}
+								},
 								{
 									ctor: '::',
 									_0: A2(
-										_elm_lang$html$Html$span,
-										{ctor: '[]'},
+										_elm_lang$html$Html$div,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text(preSymbolText),
+											_0: _elm_lang$html$Html_Attributes$class('source-path'),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												_elm_lang$core$Basics$toString(range.start.row + 1)),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
 										_0: A2(
 											_elm_lang$html$Html$span,
+											{ctor: '[]'},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$class('symbol'),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text(symbolText),
+												_0: _elm_lang$html$Html$text(preSymbolText),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
 											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$span,
-												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text(postSymbolText),
+													_0: _elm_lang$html$Html_Attributes$class('symbol'),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(symbolText),
 													_1: {ctor: '[]'}
 												}),
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$span,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(postSymbolText),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
 										}
 									}
 								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('source-path'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											A2(
-												_elm_lang$core$Basics_ops['++'],
-												A2(
-													_elm_lang$core$String$dropLeft,
-													_elm_lang$core$String$length(projectDirectory),
-													sourcePath),
-												A2(
-													_elm_lang$core$Basics_ops['++'],
-													' (',
-													A2(
-														_elm_lang$core$Basics_ops['++'],
-														_elm_lang$core$Basics$toString(range.start.row + 1),
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															',',
-															A2(
-																_elm_lang$core$Basics_ops['++'],
-																_elm_lang$core$Basics$toString(range.start.column + 1),
-																')')))))),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
+							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
 				}));
 	});
-var _user$project$Usages$view = function (_p9) {
-	var _p10 = _p9;
-	var _p13 = _p10.willShowRenamePanel;
-	var _p12 = _p10.usages;
-	var upsert = F3(
-		function (k, v, dict) {
-			var _p11 = A2(_elm_lang$core$Dict$get, k, dict);
-			if (_p11.ctor === 'Just') {
+var _user$project$Usages$view = function (_p16) {
+	var _p17 = _p16;
+	var _p21 = _p17.willShowRenamePanel;
+	var _p20 = _p17.usages;
+	var _p19 = _p17.projectDirectory;
+	var upsert = F4(
+		function (ix, k, v, dict) {
+			var _p18 = A2(_elm_lang$core$Dict$get, k, dict);
+			if (_p18.ctor === 'Just') {
 				return A3(
 					_elm_lang$core$Dict$insert,
 					k,
 					A2(
 						_elm_lang$core$Array$append,
-						_p11._0,
+						_p18._0,
 						_elm_lang$core$Array$fromList(
 							{
 								ctor: '::',
-								_0: v,
+								_0: {ctor: '_Tuple2', _0: ix, _1: v},
 								_1: {ctor: '[]'}
 							})),
 					dict);
@@ -8705,23 +8714,24 @@ var _user$project$Usages$view = function (_p9) {
 					_elm_lang$core$Array$fromList(
 						{
 							ctor: '::',
-							_0: v,
+							_0: {ctor: '_Tuple2', _0: ix, _1: v},
 							_1: {ctor: '[]'}
 						}),
 					dict);
 			}
 		});
 	var usagesGroupedBySourcePath = A3(
-		_elm_lang$core$Array$foldl,
-		function (c) {
-			return A2(upsert, c.sourcePath, c);
-		},
+		_user$project$Usages$indexedFoldl,
+		F2(
+			function (ix, c) {
+				return A3(upsert, ix, c.sourcePath, c);
+			}),
 		_elm_lang$core$Dict$empty,
-		_p12);
+		_p20);
 	var headerText = function () {
-		if (_p13) {
+		if (_p21) {
 			var usageOrUsages = _elm_lang$core$Native_Utils.eq(
-				_elm_lang$core$Array$length(_p12),
+				_elm_lang$core$Array$length(_p20),
 				1) ? ' usage' : ' usages';
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
@@ -8730,14 +8740,14 @@ var _user$project$Usages$view = function (_p9) {
 					_elm_lang$core$Basics_ops['++'],
 					_elm_lang$core$Basics$toString(
 						_elm_lang$core$Array$length(
-							_user$project$Usages$checkedUsages(_p12))),
+							_user$project$Usages$checkedUsages(_p20))),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						' out of ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							_elm_lang$core$Basics$toString(
-								_elm_lang$core$Array$length(_p12)),
+								_elm_lang$core$Array$length(_p20)),
 							usageOrUsages))));
 		} else {
 			return A2(
@@ -8745,12 +8755,12 @@ var _user$project$Usages$view = function (_p9) {
 				'Usages for `',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					_p10.token,
+					_p17.token,
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						'`: ',
 						_elm_lang$core$Basics$toString(
-							_elm_lang$core$Array$length(_p12)))));
+							_elm_lang$core$Array$length(_p20)))));
 		}
 	}();
 	return A2(
@@ -8792,10 +8802,28 @@ var _user$project$Usages$view = function (_p9) {
 													ctor: '::',
 													_0: A2(
 														_elm_lang$html$Html$div,
-														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text(k),
+															_0: _elm_lang$html$Html_Attributes$class('file'),
+															_1: {ctor: '[]'}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(
+																A2(
+																	_elm_lang$core$Basics_ops['++'],
+																	A2(
+																		_elm_lang$core$String$dropLeft,
+																		_elm_lang$core$String$length(_p19),
+																		k),
+																	A2(
+																		_elm_lang$core$Basics_ops['++'],
+																		' (',
+																		A2(
+																			_elm_lang$core$Basics_ops['++'],
+																			_elm_lang$core$Basics$toString(
+																				_elm_lang$core$Array$length(v)),
+																			')')))),
 															_1: {ctor: '[]'}
 														}),
 													_1: {
@@ -8805,8 +8833,10 @@ var _user$project$Usages$view = function (_p9) {
 															{ctor: '[]'},
 															_elm_lang$core$Array$toList(
 																A2(
-																	_elm_lang$core$Array$indexedMap,
-																	A3(_user$project$Usages$usageView, _p10.projectDirectory, _p10.selectedIndex, _p13),
+																	_elm_lang$core$Array$map,
+																	function (x) {
+																		return A4(_user$project$Usages$usageView, _p19, _p17.selectedIndex, _p21, x);
+																	},
 																	v))),
 														_1: {ctor: '[]'}
 													}
@@ -8832,19 +8862,19 @@ var _user$project$Usages$subscriptions = function (model) {
 			_1: {
 				ctor: '::',
 				_0: _user$project$Usages$selectNextUsageSub(
-					function (_p14) {
+					function (_p22) {
 						return _user$project$Usages$SelectNextUsage;
 					}),
 				_1: {
 					ctor: '::',
 					_0: _user$project$Usages$selectPreviousUsageSub(
-						function (_p15) {
+						function (_p23) {
 							return _user$project$Usages$SelectPreviousUsage;
 						}),
 					_1: {
 						ctor: '::',
 						_0: _user$project$Usages$getCheckedUsagesSub(
-							function (_p16) {
+							function (_p24) {
 								return _user$project$Usages$GetCheckedUsages;
 							}),
 						_1: {ctor: '[]'}

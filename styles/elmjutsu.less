@@ -57,6 +57,12 @@
   padding: @component-padding;
   font-size: @font-size;
   white-space: pre;
+  .file {
+    font-weight: 700;
+  }
+  .line-wrapper {
+    display: flex;
+  }
   .header {
     color: @text-color-subtle;
     border-bottom: solid 1px rgba(255, 255, 255, 0.1);
@@ -80,24 +86,26 @@
   ul {
     list-style-type: none;
     padding: 0px;
-    li {
-      display: flex;
-      cursor: pointer;
-      padding: 2px 0px;
-      border-bottom: solid 1px rgba(255, 255, 255, 0.05);
-      .symbol {
-        border: solid 1px fadeout(@ui-site-color-5, 50%);
-        border-radius: @component-border-radius;
-        font-weight: bold;
-      }
-      .usage-text {
-        display: inline-block;
-        width: 100%;
-      }
-      .usage-text-unchecked {
-        .usage-text;
-        opacity: 0.25;
-      }
+    ul {
+        li {
+          display: flex;
+          cursor: pointer;
+          padding: 2px 0 2px 15px;
+          border-bottom: solid 1px rgba(255, 255, 255, 0.05);
+          .symbol {
+            border: solid 1px fadeout(@ui-site-color-5, 80%);
+            border-radius: @component-border-radius;
+            font-weight: bold;
+          }
+          .usage-text {
+            display: inline-block;
+            // width: 100%;
+          }
+          .usage-text-unchecked {
+            .usage-text;
+            opacity: 0.5;
+          }
+        }
     }
     li:hover {
       background-color: @background-color-highlight;
@@ -107,7 +115,11 @@
     }
   }
   .source-path {
-    font-size: 90%;
+    padding-right: 5px;
+    // font-size: 90%;
+    // font-family: monospace;
+    width: 5ch;
+    text-align: right;
     color: @text-color-subtle;
   }
 }

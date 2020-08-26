@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (checked, class, type_)
 import Html.Events exposing (onCheck, onClick)
 import String
-
+import Tuple
 
 main : Program Never Model Msg
 main =
@@ -213,7 +213,14 @@ maybeViewInEditor index usages =
 
 
 -- VIEW
-
+indexedFoldl : (Int -> a -> b -> b) -> b -> Array.Array a -> b
+indexedFoldl func acc list =
+    let
+        step : a -> ( Int, b ) -> ( Int, b )
+        step x ( i, thisAcc ) =
+            ( i + 1, func i x thisAcc )
+    in
+    Tuple.second (Array.foldl step ( 0, acc ) list)
 
 view : Model -> Html Msg
 view { usages, token, projectDirectory, selectedIndex, willShowRenamePanel } =
@@ -234,15 +241,15 @@ view { usages, token, projectDirectory, selectedIndex, willShowRenamePanel } =
                 "Usages for `" ++ token ++ "`: " ++ (toString <| Array.length usages)
 
         usagesGroupedBySourcePath =
-            Array.foldl (\c -> upsert c.sourcePath c) Dict.empty usages
+            indexedFoldl (\ix c -> upsert ix c.sourcePath c) Dict.empty usages
 
-        upsert k v dict =
+        upsert ix k v dict =
             case Dict.get k dict of
                 Just ov ->
-                    Dict.insert k (Array.append ov (Array.fromList [ v ])) dict
+                    Dict.insert k (Array.append ov (Array.fromList [ (ix, v) ])) dict
 
                 Nothing ->
-                    Dict.insert k (Array.fromList [ v ]) dict
+                    Dict.insert k (Array.fromList [ (ix, v) ]) dict
     in
     div []
         [ div [ class "header" ]
@@ -253,9 +260,9 @@ view { usages, token, projectDirectory, selectedIndex, willShowRenamePanel } =
                 (Dict.map
                     (\k v ->
                         li []
-                            [ div [] [ text k]
+                            [ div [class "file"] [ text ((String.dropLeft (String.length projectDirectory) k) ++ " (" ++ (toString <| Array.length v) ++ ")" )]
                             , ul []
-                                (Array.indexedMap (usageView projectDirectory selectedIndex willShowRenamePanel) v
+                                (Array.map (\x -> usageView projectDirectory selectedIndex willShowRenamePanel x) v
                                     |> Array.toList
                                 )
                             ]
@@ -267,8 +274,8 @@ view { usages, token, projectDirectory, selectedIndex, willShowRenamePanel } =
         ]
 
 
-usageView : String -> Int -> Bool -> Int -> Usage -> Html Msg
-usageView projectDirectory selectedIndex willShowRenamePanel index usage =
+usageView : String -> Int -> Bool -> (Int, Usage)  -> Html Msg
+usageView projectDirectory selectedIndex willShowRenamePanel (index, usage) =
     let
         { lineText, sourcePath, range } =
             usage
@@ -308,12 +315,14 @@ usageView projectDirectory selectedIndex willShowRenamePanel index usage =
     li [ class listItemClass ]
         (maybeRenamePanelView
             ++ [ div [ onClick (SelectIndex index), class usageTextClass ]
-                    [ div []
-                        [ span [] [ text preSymbolText ]
+                    [ div [class "line-wrapper"]
+                        [
+                            div [class "source-path"] [text (toString <| range.start.row + 1)]
+                            , span [] [ text preSymbolText ]
                         , span [ class "symbol" ] [ text symbolText ]
                         , span [] [ text postSymbolText ]
                         ]
-                    , div [ class "source-path" ] [ text (String.dropLeft (String.length projectDirectory) sourcePath ++ " (" ++ (toString <| range.start.row + 1) ++ "," ++ (toString <| range.start.column + 1) ++ ")") ]
+                    -- , div [ class "source-path" ] [ text (" (" ++ (toString <| range.start.row + 1) ++ "," ++ (toString <| range.start.column + 1) ++ ")") ]
                     ]
                ]
         )
